@@ -1,6 +1,12 @@
 export type AmplifyDependentResourcesAttributes = {
+  "api": {
+    "lecturesummaryapp": {
+      "GraphQLAPIEndpointOutput": "string",
+      "GraphQLAPIIdOutput": "string"
+    }
+  },
   "auth": {
-    "lecturesummaryapp68e294a7": {
+    "lecturesummaryapp3e686dfd": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",
@@ -8,6 +14,16 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
+    }
+  },
+  "storage": {
+    "HackathonLectureDB": {
+      "Arn": "string",
+      "Name": "string",
+      "PartitionKeyName": "string",
+      "PartitionKeyType": "string",
+      "Region": "string",
+      "StreamArn": "string"
     }
   }
 }

@@ -1,6 +1,32 @@
 {
+  "api": {
+    "lecturesummaryapp": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "lecturesummaryapp3e686dfd"
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authlecturesummaryapp3e686dfd"
+            }
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
   "auth": {
-    "lecturesummaryapp68e294a7": {
+    "lecturesummaryapp3e686dfd": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -23,6 +49,12 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "storage": {
+    "HackathonLectureDB": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }

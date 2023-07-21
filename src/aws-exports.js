@@ -3,14 +3,10 @@
 
 const awsmobile = {
     "aws_project_region": "us-east-1",
-    "aws_appsync_graphqlEndpoint": "https://w6rp6lgcpfgsdjkxv5xgwuoh6a.appsync-api.us-east-1.amazonaws.com/graphql",
-    "aws_appsync_region": "us-east-1",
-    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
-    "aws_appsync_apiKey": "da2-ytuwt7zeendujetrm7mhn4a64a",
-    "aws_cognito_identity_pool_id": "us-east-1:0c08fe62-547b-457b-9d21-616a36059313",
+    "aws_cognito_identity_pool_id": "us-east-1:2b63a8c7-062d-436a-a03f-284131b09b3b",
     "aws_cognito_region": "us-east-1",
-    "aws_user_pools_id": "us-east-1_hsBdBWEfh",
-    "aws_user_pools_web_client_id": "7c7ih7fitjjaifs5qme3hvhh5o",
+    "aws_user_pools_id": "us-east-1_yTWRjgD2c",
+    "aws_user_pools_web_client_id": "7ri90o861263e5f935th7eb7r",
     "oauth": {},
     "aws_cognito_username_attributes": [],
     "aws_cognito_social_providers": [],
@@ -28,28 +24,16 @@ const awsmobile = {
     "aws_cognito_verification_mechanisms": [
         "EMAIL"
     ],
-    "aws_user_output_files_s3_bucket":
-        "lecture-summary-output-993839318285",
-
-    "aws_user_files_s3_bucket_region":
-        "us-east-1",
-
-    "aws_dynamodb_all_tables_region":
-        "us-east-1",
+    "aws_appsync_graphqlEndpoint": "https://uiyr5ud6ifevlfozciyizfiy4m.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_appsync_region": "us-east-1",
+    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
+    "aws_dynamodb_all_tables_region": "us-east-1",
     "aws_dynamodb_table_schemas": [
-
         {
-
-            "tableName":
-                "HackathonLectureSummary",
-
-            "region":
-                "us-east-1"
-
+            "tableName": "HackathonLectureDB-dev",
+            "region": "us-east-1"
         }
-
     ]
-
 };
 
 

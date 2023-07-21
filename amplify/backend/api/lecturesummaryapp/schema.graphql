@@ -1,0 +1,127 @@
+input CreateHackathonLectureSummaryInput {
+	id: String!
+	createdAt: Int!
+	lectureSummaryS3Url: String!
+	lectureTitle: String!
+}
+
+input DeleteHackathonLectureSummaryInput {
+	id: String!
+}
+
+type HackathonLectureSummary {
+	id: String!
+	createdAt: Int!
+	lectureSummaryS3Url: String!
+	lectureTitle: String!
+}
+
+type HackathonLectureSummaryConnection {
+	items: [HackathonLectureSummary]
+	nextToken: String
+}
+
+input TableBooleanFilterInput {
+	ne: Boolean
+	eq: Boolean
+}
+
+input TableFloatFilterInput {
+	ne: Float
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	contains: Float
+	notContains: Float
+	between: [Float]
+}
+
+input TableHackathonLectureSummaryFilterInput {
+	id: TableStringFilterInput
+	createdAt: TableIntFilterInput
+	lectureSummaryS3Url: TableStringFilterInput
+	lectureTitle: TableStringFilterInput
+}
+
+input TableIDFilterInput {
+	ne: ID
+	eq: ID
+	le: ID
+	lt: ID
+	ge: ID
+	gt: ID
+	contains: ID
+	notContains: ID
+	between: [ID]
+	beginsWith: ID
+}
+
+input TableIntFilterInput {
+	ne: Int
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	contains: Int
+	notContains: Int
+	between: [Int]
+}
+
+input TableStringFilterInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
+
+input UpdateHackathonLectureSummaryInput {
+	id: String!
+	createdAt: Int
+	lectureSummaryS3Url: String
+	lectureTitle: String
+}
+
+type Mutation {
+	createHackathonLectureSummary(input: CreateHackathonLectureSummaryInput!): HackathonLectureSummary
+	updateHackathonLectureSummary(input: UpdateHackathonLectureSummaryInput!): HackathonLectureSummary
+	deleteHackathonLectureSummary(input: DeleteHackathonLectureSummaryInput!): HackathonLectureSummary
+}
+
+type Query {
+	getHackathonLectureSummary(id: String!): HackathonLectureSummary
+	listHackathonLectureSummaries(filter: TableHackathonLectureSummaryFilterInput, limit: Int, nextToken: String): HackathonLectureSummaryConnection
+}
+
+type Subscription {
+	onCreateHackathonLectureSummary(
+		id: String,
+		createdAt: Int,
+		lectureSummaryS3Url: String,
+		lectureTitle: String
+	): HackathonLectureSummary
+		@aws_subscribe(mutations: ["createHackathonLectureSummary"])
+	onUpdateHackathonLectureSummary(
+		id: String,
+		createdAt: Int,
+		lectureSummaryS3Url: String,
+		lectureTitle: String
+	): HackathonLectureSummary
+		@aws_subscribe(mutations: ["updateHackathonLectureSummary"])
+	onDeleteHackathonLectureSummary(
+		id: String,
+		createdAt: Int,
+		lectureSummaryS3Url: String,
+		lectureTitle: String
+	): HackathonLectureSummary
+		@aws_subscribe(mutations: ["deleteHackathonLectureSummary"])
+}
+

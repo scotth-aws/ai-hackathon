@@ -1,19 +1,25 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-lecturesummaryapp-dev-54359-authRole",
-      "UnauthRoleArn": "arn:aws:iam::993839318285:role/amplify-lecturesummaryapp-dev-54359-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::993839318285:role/amplify-lecturesummaryapp-dev-54359-authRole",
+      "AuthRoleName": "amplify-lecturesummaryapp-dev-172043-authRole",
+      "UnauthRoleArn": "arn:aws:iam::993839318285:role/amplify-lecturesummaryapp-dev-172043-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::993839318285:role/amplify-lecturesummaryapp-dev-172043-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-lecturesummaryapp-dev-54359-deployment",
-      "UnauthRoleName": "amplify-lecturesummaryapp-dev-54359-unauthRole",
-      "StackName": "amplify-lecturesummaryapp-dev-54359",
-      "StackId": "arn:aws:cloudformation:us-east-1:993839318285:stack/amplify-lecturesummaryapp-dev-54359/1f2b5b10-27ab-11ee-8286-124212fee89d",
-      "AmplifyAppId": "d3eceaz3jpukl5"
+      "DeploymentBucketName": "amplify-lecturesummaryapp-dev-172043-deployment",
+      "UnauthRoleName": "amplify-lecturesummaryapp-dev-172043-unauthRole",
+      "StackName": "amplify-lecturesummaryapp-dev-172043",
+      "StackId": "arn:aws:cloudformation:us-east-1:993839318285:stack/amplify-lecturesummaryapp-dev-172043/74969bd0-280c-11ee-98e0-0eb7fb72b941",
+      "AmplifyAppId": "djtl3ejflpcio"
     },
     "categories": {
       "auth": {
-        "lecturesummaryapp68e294a7": {}
+        "lecturesummaryapp3e686dfd": {}
+      },
+      "api": {
+        "lecturesummaryapp": {}
+      },
+      "storage": {
+        "HackathonLectureDB": {}
       }
     }
   }
