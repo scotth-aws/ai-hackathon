@@ -32,11 +32,27 @@ import {
     Auth,
     API,
     graphqlOperation,
+    Storage,
+    Amplify
 
 } from "aws-amplify";
 
 import { listHackathonLectureSummaries, getHackathonLectureSummary } from "../../graphql/queries.js";
 import { onCreateHackathonLectureSummary } from "../../graphql/subscriptions.js";
+import awsconfig from "../../aws-exports";
+
+Amplify.configure(awsconfig);
+
+Storage.configure({
+    AWSS3: {
+        bucket: awsconfig.aws_user_output_files_s3_bucket,
+        region: 'us-east-1',
+        level: "public",
+        customPrefix: {
+            public: "",
+        },
+    },
+});
 
 const logger = new Logger("erdLogger", "DEBUG");
 const Content = (state) => {
@@ -46,6 +62,7 @@ const Content = (state) => {
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [filteringText, setFilteringText] = useState("");
+    const [summaryOutput, setSummaryOutput] = useState("");
     var [itemSet, setItemSet] = useState(items);
     const [pagesCount, setPagesCount] = React.useState(
         Math.ceil(items.length / 5)
@@ -82,56 +99,71 @@ const Content = (state) => {
     const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
     const [deleteDisabled, setDeleteDisabled] = useState(true);
-    const getSummary = (event) => {
-        if (process.env.NODE_ENV === 'development')
-            console.log("deleteDeployments " + JSON.stringify(event));
+
+    const getSummary = async (event) => {
+        if (process.env.NODE_ENV === 'development') {
+            //console.log("getSummary " + JSON.stringify(event));
+            console.log("****** getSelectedItem " + selectedItems[0].id);
+        }
+        try {
+            const result = await Storage.get(selectedItems[0].id, { download: true });
+
+            // data.Body is a Blob
+            result.Body.text().then((string) => {
+                // handle the String data return String
+                console.log('s3 body '+string);
+                setSummaryOutput(string);
+            });
+        } catch (err) {
+            console.log('get error ' + err);
+        }
     }
 
-    console.log('items ' + JSON.stringify(items));
+    //console.log('items ' + JSON.stringify(items));
 
 
-    
+
     const search = (detail) => {
 
         var searchString = detail.filteringText;
-    
+
         setFilteringText(searchString);
-    
+
         if (searchString.length > 2) {
-    
-    
-    
-          let narray = [];
-          for (var i = 0; i < items.length; i++) {
-    
-            if (items[i].lectureTitle.includes(searchString)) {
-              if (process.env.NODE_ENV === 'development')
-                console.log("HIT ");
-              narray.push(items[i]);
-    
-    
-            } else {
-              if (process.env.NODE_ENV === 'development')
-                console.log("MISS ");
-    
+
+
+
+            let narray = [];
+            for (var i = 0; i < items.length; i++) {
+
+                if (items[i].lectureTitle.includes(searchString)) {
+                    if (process.env.NODE_ENV === 'development')
+                        console.log("HIT ");
+                    narray.push(items[i]);
+
+
+                } else {
+                    if (process.env.NODE_ENV === 'development')
+                        console.log("MISS ");
+
+                }
             }
-          }
-          if (process.env.NODE_ENV === 'development')
-            console.log(narray.length);
-    
-    
-          setItemSet(narray);
-    
+            if (process.env.NODE_ENV === 'development')
+                console.log(narray.length);
+
+
+            setItemSet(narray);
+
         } else if (searchString.length === 0) {
-          if (process.env.NODE_ENV === 'development')
-            console.log("RESET");
-    
-          setItemSet(items.slice((currentPageIndex - 1) * 5, currentPageIndex * 5));
+            if (process.env.NODE_ENV === 'development')
+                console.log("RESET");
+
+            setItemSet(items.slice((currentPageIndex - 1) * 5, currentPageIndex * 5));
         }
-    
-    
-    
-      }
+
+
+
+    }
     useEffect(() => {
         API.graphql({
             query: onCreateHackathonLectureSummary,
@@ -145,18 +177,13 @@ const Content = (state) => {
                         JSON.stringify(data.value.data.onCreateHackathonLectureSummary)
                     );
 
-                    alert('Lecture Summaries Updated');
-                    window.location.reload(false);
-                    
-                    //var newItem = data.value.data.onCreateHackathonLectureSummary;
-                    //items.push(newItem);
-                    //console.log('new items '+JSON.stringify(items));
-                    //setItemSet(items);
+                alert('Lecture Summaries Updated');
+                window.location.reload(false);
 
             },
         });
     }, [items]);
-    
+
 
 
     return (
@@ -353,7 +380,7 @@ const Content = (state) => {
                             </Box>
                         </Box>
                     }
-                    header={<Header variant="h2">Summary Output</Header>}
+                    header={<Header variant="h2" description={summaryOutput}>Summary Output</Header>}
                 />
                 <Box>
                     <Modal
