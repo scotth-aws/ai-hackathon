@@ -55,6 +55,11 @@
     "HackathonLectureDB": {
       "providerPlugin": "awscloudformation",
       "service": "DynamoDB"
+    },
+    "lecturesummaryoutput": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

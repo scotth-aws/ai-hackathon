@@ -33,7 +33,9 @@ const awsmobile = {
             "tableName": "HackathonLectureDB-dev",
             "region": "us-east-1"
         }
-    ]
+    ],
+    "aws_user_files_s3_bucket": "lecture-summary-output172043-dev",
+    "aws_user_files_s3_bucket_region": "us-east-1"
 };
 
 

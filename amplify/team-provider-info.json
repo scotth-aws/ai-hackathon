@@ -19,7 +19,8 @@
         "lecturesummaryapp": {}
       },
       "storage": {
-        "HackathonLectureDB": {}
+        "HackathonLectureDB": {},
+        "lecturesummaryoutput": {}
       }
     }
   }

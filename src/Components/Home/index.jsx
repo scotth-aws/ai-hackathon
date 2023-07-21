@@ -45,7 +45,7 @@ Amplify.configure(awsconfig);
 
 Storage.configure({
     AWSS3: {
-        bucket: awsconfig.aws_user_output_files_s3_bucket,
+        bucket: awsconfig.aws_user_files_s3_bucket,
         region: 'us-east-1',
         level: "public",
         customPrefix: {

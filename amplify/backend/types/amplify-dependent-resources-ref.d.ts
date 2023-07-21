@@ -24,6 +24,10 @@ export type AmplifyDependentResourcesAttributes = {
       "PartitionKeyType": "string",
       "Region": "string",
       "StreamArn": "string"
+    },
+    "lecturesummaryoutput": {
+      "BucketName": "string",
+      "Region": "string"
     }
   }
 }
