@@ -1,0 +1,540 @@
+import React, { useState, useEffect } from "react";
+import "./index.css";
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
+import { appLayoutLabels } from "../labels";
+import {
+    AppLayout,
+    Box,
+    Header,
+    HelpPanel,
+    Button,
+    Alert,
+    Container,
+    TextContent,
+    Cards,
+    Link,
+    SpaceBetween,
+    ContentLayout,
+    TextFilter,
+    Table,
+    Pagination,
+    CollectionPreferences,
+    ColumnLayout,
+    Modal,
+    Icon,
+    Grid,
+    Badge
+} from "@cloudscape-design/components";
+import Navigation from "../Navigation";
+import {
+    Logger,
+    Auth,
+    API,
+    graphqlOperation,
+
+} from "aws-amplify";
+
+import { listHackathonLectureSummaries, getHackathonLectureSummary } from "../../graphql/queries.js";
+import { onCreateHackathonLectureSummary } from "../../graphql/subscriptions.js";
+
+const logger = new Logger("erdLogger", "DEBUG");
+const Content = (state) => {
+    var items = state.completedItems;
+    if (process.env.NODE_ENV === 'development')
+        console.log("state completedItems " + state.completedItems);
+    const [currentPageIndex, setCurrentPageIndex] = useState(1);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [filteringText, setFilteringText] = useState("");
+    var [itemSet, setItemSet] = useState(items);
+    const [pagesCount, setPagesCount] = React.useState(
+        Math.ceil(items.length / 5)
+    );
+    const [alertColor, setAlertColor] = React.useState("blue");
+
+
+    const setMatches = (detail) => {
+        setCurrentPageIndex(detail.currentPageIndex);
+    };
+
+    const selectionChangeButton = (detail) => {
+        if (process.env.NODE_ENV === 'development')
+            console.log("selectionChangeButton HIT " + JSON.stringify(detail.selectedItems));
+        setSelectedItems(detail.selectedItems);
+        if (detail.selectedItems.length === 0) {
+            setDeleteDisabled(true);
+            setSelectedItemsOutputs([]);
+            //setSelectedItems(detail.selectedItems);
+            return;
+        } else {
+            setDeleteDisabled(false);
+        }
+
+    };
+    const [deploymentHeader, setDeploymentHeader] = useState(
+        "Lecture Summary"
+    );
+    const [preferences, setPreferences] = React.useState({
+        pageSize: 10,
+        wrapLines: true,
+        visibleContent: ["lectureTitle", "createdAt", "S3Location", "accountid"]
+    });
+    const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
+    const [visible, setVisible] = React.useState(false);
+    const [deleteDisabled, setDeleteDisabled] = useState(true);
+    const getSummary = (event) => {
+        if (process.env.NODE_ENV === 'development')
+            console.log("deleteDeployments " + JSON.stringify(event));
+    }
+
+    console.log('items ' + JSON.stringify(items));
+
+
+    
+    const search = (detail) => {
+
+        var searchString = detail.filteringText;
+    
+        setFilteringText(searchString);
+    
+        if (searchString.length > 2) {
+    
+    
+    
+          let narray = [];
+          for (var i = 0; i < items.length; i++) {
+    
+            if (items[i].lectureTitle.includes(searchString)) {
+              if (process.env.NODE_ENV === 'development')
+                console.log("HIT ");
+              narray.push(items[i]);
+    
+    
+            } else {
+              if (process.env.NODE_ENV === 'development')
+                console.log("MISS ");
+    
+            }
+          }
+          if (process.env.NODE_ENV === 'development')
+            console.log(narray.length);
+    
+    
+          setItemSet(narray);
+    
+        } else if (searchString.length === 0) {
+          if (process.env.NODE_ENV === 'development')
+            console.log("RESET");
+    
+          setItemSet(items.slice((currentPageIndex - 1) * 5, currentPageIndex * 5));
+        }
+    
+    
+    
+      }
+    useEffect(() => {
+        API.graphql({
+            query: onCreateHackathonLectureSummary,
+
+        }).subscribe({
+            next: (data) => {
+
+                if (process.env.NODE_ENV === 'development')
+                    console.log(
+                        "onCreateHackathonLectureSummary event " +
+                        JSON.stringify(data.value.data.onCreateHackathonLectureSummary)
+                    );
+
+                    alert('Lecture Summaries Updated');
+                    window.location.reload(false);
+                    
+                    //var newItem = data.value.data.onCreateHackathonLectureSummary;
+                    //items.push(newItem);
+                    //console.log('new items '+JSON.stringify(items));
+                    //setItemSet(items);
+
+            },
+        });
+    }, [items]);
+    
+
+
+    return (
+
+        <div id="top" >
+
+
+
+            <div className="container">
+
+                <br />
+                <Table
+                    onSelectionChange={({ detail }) => selectionChangeButton(detail)}
+                    selectedItems={selectedItems}
+                    ariaLabels={{
+                        selectionGroupLabel: "Items selection",
+                        allItemsSelectionLabel: ({ selectedItems }) =>
+                            `${selectedItems.length} ${selectedItems.length === 1 ? "item" : "items"
+                            } selected`,
+                        itemSelectionLabel: ({ selectedItems }, item) => {
+                            const isItemSelected = selectedItems.filter(
+                                (i) => i.createdAt === item.createdAt
+                            ).length;
+                            return `${item.createdAt} is ${isItemSelected ? "" : "not"
+                                } selected`;
+                        },
+                    }}
+                    columnDefinitions={[
+                        {
+                            id: "lectureTitle",
+                            header: "Lecture Title",
+                            cell: (e) => e.lectureTitle,
+                            sortingField: "lectureTitle",
+                        },
+                        {
+                            id: "createdAt",
+                            header: "Created Date",
+                            cell: (e) => e.createdAt,
+                        },
+                        {
+                            id: "lectureSummaryS3Url",
+                            header: "S3 Location",
+                            cell: (e) => e.lectureSummaryS3Url,
+                        },
+
+                        {
+                            id: "accountid",
+                            header: "Account Id",
+                            cell: (e) => e.aid,
+                            sortingField: "accountid",
+                        },
+                    ]}
+                    items={itemSet}
+                    loadingText="Loading resources"
+                    selectionType="single"
+                    trackBy="createdAt"
+                    visibleColumns={[
+                        "lectureTitle",
+                        "createdAt",
+                        "lectureSummaryS3Url",
+
+                    ]}
+                    empty={
+                        <Box textAlign="center" color="inherit">
+
+                            <Box padding={{ bottom: "s" }} variant="p" color="inherit">
+                                No Summaries to display.
+                            </Box>
+                        </Box>
+                    }
+                    filter={
+                        <TextFilter
+                            size="s"
+                            filteringPlaceholder="Find Lecture Summaries"
+                            filteringText={filteringText}
+                            onChange={({ detail }) => search(detail)}
+                        />
+                    }
+                    header={
+                        <ColumnLayout columns={2}>
+                            <Header
+
+                            >
+                                Summaries
+                            </Header>
+                            <Button
+                                variant="primary"
+                                disabled={deleteDisabled}
+                                onClick={(event) => getSummary(event)}
+                            >
+                                Get Summary
+                            </Button>
+
+                        </ColumnLayout>
+                    }
+                    pagination={
+                        <Pagination
+                            currentPageIndex={currentPageIndex}
+                            onChange={({ detail }) => setMatches(detail)}
+                            pagesCount={pagesCount}
+                            ariaLabels={{
+                                nextPageLabel: "Next page",
+                                previousPageLabel: "Previous page",
+                                pageLabel: (pageNumber) => `Page ${pageNumber} of all pages`,
+                            }}
+                        />
+                    }
+                    preferences={
+                        <CollectionPreferences
+                            onConfirm={({ detail }) => setPreferences(detail)}
+                            title="Preferences"
+                            confirmLabel="Confirm"
+                            cancelLabel="Cancel"
+                            preferences={{
+                                pageSize: 10,
+                                visibleContent: [
+                                    "Lecture Title",
+                                    "createdAt",
+                                    "S3 Location",
+                                    "accountid",
+                                ],
+                            }}
+                            pageSizePreference={{
+                                title: "Select page size",
+                                options: [
+                                    { value: 10, label: "10 resources" },
+                                    { value: 20, label: "20 resources" },
+                                ],
+                            }}
+                            visibleContentPreference={{
+                                title: "Select visible content",
+                                options: [
+                                    {
+                                        label: "Main distribution properties",
+                                        options: [
+                                            { id: "lectureTitle", label: "Lecture Title" },
+                                            {
+                                                id: "createdAt",
+                                                label: "Created At",
+                                                editable: false,
+                                            },
+                                            {
+                                                id: "lectureSummaryS3Url",
+                                                label: "S3 Location",
+                                                editable: false,
+                                            },
+                                            { id: "accountid", label: "Account Id" },
+                                        ],
+                                    },
+                                ],
+                            }}
+                        />
+                    }
+                />
+            </div>
+
+
+            <br />
+            <div className="outputContainer">
+
+                <Cards
+                    cardDefinition={{
+                        sections: [
+                            {
+                                id: "outputs",
+                                content: (item) =>
+                                    item.OutputValue.substring(1, 4) !== "ttp" ? (
+                                        <React.Fragment>
+                                            <TextContent>{item.OutputKey}</TextContent>
+
+                                            <TextContent>{item.OutputValue}</TextContent>
+                                            <TextContent>{item.Description}</TextContent>
+                                        </React.Fragment>
+                                    ) : (
+                                        <React.Fragment>
+                                            <TextContent>{item.OutputKey}</TextContent>
+
+                                            <Link href={item.OutputValue} target="_blank">
+                                                {item.OutputValue}
+                                            </Link>
+                                            <TextContent>{item.Description}</TextContent>
+                                        </React.Fragment>
+                                    ),
+                            },
+                        ],
+                    }}
+                    cardsPerRow={[{ cards: 1 }, { minWidth: 300, cards: 2 }]}
+                    items={selectedItemsOutputs}
+                    loadingText="Loading resources"
+                    empty={
+                        <Box textAlign="center" color="inherit">
+                            <Box padding={{ bottom: "s" }} variant="p" color="inherit">
+                                No selected items to display.
+                            </Box>
+                        </Box>
+                    }
+                    header={<Header variant="h2">Summary Output</Header>}
+                />
+                <Box>
+                    <Modal
+                        onDismiss={() => console.log('modal exit called here')}
+                        visible={visible}
+                        closeAriaLabel="Close modal"
+                        footer={
+                            <Box float="right">
+                                <SpaceBetween direction="horizontal" size="xs"></SpaceBetween>
+                            </Box>
+                        }
+                        header={deploymentHeader}
+                    >
+                        <TextContent>
+                            <strong style={{ color: alertColor }}>{alert}</strong>
+                        </TextContent>
+                    </Modal>
+                </Box>
+
+            </div>
+
+        </div>
+    );
+
+};
+
+const SideHelp = () => (
+    <HelpPanel
+        footer={
+            <div>
+                <h3>
+                    Learn more <Icon name="external" />
+                </h3>
+                <ul>
+
+                    <li>
+                        <a href="https://aws.amazon.com/pm/sagemaker/?trk=8987dd52-6f33-407a-b89b-a7ba025c913c&sc_channel=ps&s_kwcid=AL!4422!3!532502995192!e!!g!!aws%20sagemaker&ef_id=CjwKCAiA-dCcBhBQEiwAeWidtWI7aFvzG9hpRKt9RKhBuuJGBwF6irH7RpwxPvuC1Ch9hMb9EDjLfxoC-BkQAvD_BwE:G:s&s_kwcid=AL!4422!3!532502995192!e!!g!!aws%20sagemaker" target="_blank" rel="noreferrer">
+                            Amazon Sagemaker
+                        </a>
+                    </li>
+
+
+                </ul>
+            </div>
+        }
+        header={<h2>Lecture Summary Help</h2>}
+    >
+        <div>
+
+            <h3>From here you can :</h3>
+            <ul>
+                <li>
+                    View the Lecture Summaries.
+                </li>
+                <li>
+                    Select Summary to download and view.
+                </li>
+
+            </ul>
+
+
+        </div>
+    </HelpPanel>
+);
+
+function Home() {
+    const [User, setUser] = useState({});
+    const [completedItems, setCompletedItems] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    if (process.env.NODE_ENV === 'development')
+        console.log('The Home setup begins ---------->');
+    var filterItems = [];
+    useEffect(() => {
+        if (process.env.NODE_ENV === 'development')
+            console.log('useEffect called .  .  .');
+
+        let current_user = {};
+        try {
+            current_user = {
+                isLoggedIn: false,
+                isOperator: true,
+                isAdmin: false,
+                username: "",
+                token: "",
+            };
+            // get the current authenticated user object
+            Auth.currentAuthenticatedUser({
+                bypassCache: false, // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+            })
+                .then((user) => {
+                    current_user.isLoggedIn = true;
+                    current_user.username = user.username;
+                    current_user.token = user.signInUserSession.idToken["jwtToken"];
+                    if (process.env.NODE_ENV === 'development')
+                        console.log('Auth.currentAuthenticatedUser called current user is ' + user.username);
+                    if (
+                        user.signInUserSession.idToken.payload["cognito:groups"] !==
+                        undefined
+                    )
+                        current_user.isAdmin = true;
+
+                    const searchObject = {
+                        deploymentStatus: "CREATE_COMPLETE",
+                    };
+                    var budget = "FS-ResearchBudget-" + user.username;
+                    const budgetObject = {
+                        name: budget,
+                    };
+                    if (process.env.NODE_ENV === 'development')
+                        console.log('API.graphql(graphqlOperation(listHackathonLectureSummaries, searchObject)) being called  .  .  . ');
+
+                    const costObject = { id: "myId" };
+                    API.graphql(graphqlOperation(listHackathonLectureSummaries, {})).then((response, error) => {
+
+                        console.log('listHackathonLectureSummaries ' + JSON.stringify(response.data.listHackathonLectureSummaries.items));
+                        setCompletedItems(response.data.listHackathonLectureSummaries.items);
+
+                        setUser(current_user);
+                        setIsLoading(false);
+
+                    })
+
+
+
+                })
+                .catch(
+                    (err) => {
+                        setIsLoading(false);
+                        if (process.env.NODE_ENV === 'development')
+                            console.log("Home -> index.jsx - Auth error " + JSON.stringify(err), Date.now())
+
+                    });
+        } catch (e) {
+            setIsLoading(false);
+            if (process.env.NODE_ENV === 'development')
+                console.log(JSON.stringify(e));
+            //logger.info("Home -> index.jsx - useEffect error " + JSON.stringify(e), Date.now());
+        } finally {
+            if (process.env.NODE_ENV === 'development')
+                console.log("finally");
+
+        }
+    }, []);
+    if (process.env.NODE_ENV === 'development')
+        console.log("After useEffect ");
+
+    const [lnavopen, setLnavopen] = useState(true);
+    const [rnavopen, setRnavopen] = useState(false);
+
+
+    const navChange = (detail) => {
+        setLnavopen(detail.open)
+    }
+    const toolsChange = (detail) => {
+        setRnavopen(detail.open)
+    }
+
+    if (!isLoading) {
+        return (
+            <AppLayout
+                disableContentPaddings={false}
+                navigation={<Navigation User={User} />}
+                content={<Content User={User} completedItems={completedItems} />}
+                contentType="default"
+                tools={<SideHelp />}
+                toolsOpen={rnavopen}
+                toolsWidth={350}
+                navigationOpen={lnavopen}
+                onNavigationChange={({ detail }) => navChange(detail)}
+                onToolsChange={({ detail }) => toolsChange(detail)}
+                ariaLabels={appLayoutLabels}
+            />
+        );
+    } else {
+        return (
+            <Container>
+                <TextContent>Loading . . . </TextContent>
+            </Container>
+        );
+    }
+}
+
+export default withAuthenticator(Home);
