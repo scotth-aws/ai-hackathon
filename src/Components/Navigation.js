@@ -29,7 +29,17 @@ const Navigation = (current_user) => {
                 text: "Students",
                 expanded: true,
                 items: [
-                    { type: "link", text: "Lecture Summaries", href: "/Home" }
+                    { type: "link", text: "Generated Lecture Summaries", href: "/Home" },
+                    { type: "link", text: "Generated Questions From Lectures", href: "/Questions" }
+
+                ]
+            });
+            navigation_items.push({
+                type: "section",
+                text: "Faculty",
+                expanded: true,
+                items: [
+                    { type: "link", text: "Upload Lectures", href: "/Upload" }
 
                 ]
             });

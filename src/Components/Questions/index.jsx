@@ -108,14 +108,15 @@ const Content = (state) => {
             console.log("****** getSelectedItem " + selectedItems[0].id);
         }
         try {
-            const result = await Storage.get(selectedItems[0].id, { download: true });
+            //const result = await Storage.get(selectedItems[0].id, { download: true });
 
             // data.Body is a Blob
-            result.Body.text().then((string) => {
+            //result.Body.text().then((string) => {
                 // handle the String data return String
-                console.log('s3 body ' + string);
-                setSummaryOutput(string);
-            });
+                //console.log('s3 body ' + string);
+                //setSummaryOutput(string);
+            //});
+            setSummaryOutput("When did the Civil War begin? \n When did it end?");
         } catch (err) {
             console.log('get error ' + err);
         }
@@ -277,14 +278,14 @@ const Content = (state) => {
                             <Header
 
                             >
-                                Summaries
+                                Lectures
                             </Header>
                             <Button
                                 variant="primary"
                                 disabled={deleteDisabled}
                                 onClick={(event) => getSummary(event)}
                             >
-                                Get Summary
+                                Get Questions
                             </Button>
 
                         </ColumnLayout>
@@ -385,7 +386,7 @@ const Content = (state) => {
                             </Box>
                         </Box>
                     }
-                    header={<Header variant="h2" description={summaryOutput}>Summary Output</Header>}
+                    header={<Header variant="h2" description={summaryOutput}>Lecture Questions</Header>}
                 />
 
 
@@ -415,18 +416,16 @@ const SideHelp = () => (
                 </ul>
             </div>
         }
-        header={<h2>Lecture Summary Help</h2>}
+        header={<h2>Lecture Questions Help</h2>}
     >
         <div>
 
             <h3>From here you can :</h3>
             <ul>
                 <li>
-                    View the Lecture Summaries.
+                    View the Questions gnerated from Lectures.
                 </li>
-                <li>
-                    Select Summary to download and view.
-                </li>
+               
 
             </ul>
 
@@ -435,7 +434,7 @@ const SideHelp = () => (
     </HelpPanel>
 );
 
-function Home() {
+function Questions() {
     const [User, setUser] = useState({});
     const [completedItems, setCompletedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -546,4 +545,4 @@ function Home() {
     }
 }
 
-export default withAuthenticator(Home);
+export default withAuthenticator(Questions);

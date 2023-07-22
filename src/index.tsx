@@ -1,27 +1,22 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-//import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import './index.css';
-import Home from './Components/Home/index.jsx';
-import reportWebVitals from './reportWebVitals';
+import App from './App.js';
 import * as serviceWorker from "./serviceWorker";
-import Routing from "./Components/Router";
 import { Amplify } from "aws-amplify";
 import awsconfig from "./aws-exports";
 
 Amplify.configure(awsconfig);
 
 try {
-
-  if (process.env.NODE_ENV == 'development')
-    console.log('I am here');
   const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-  //ReactDOM.render(Routing, document.getElementById("root"));
   root.render(
     <React.StrictMode>
-      <Home />
+      <App />
     </React.StrictMode>
   );
+  
+
   serviceWorker.unregister();
 
 } catch (error) {
