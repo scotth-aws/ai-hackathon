@@ -6,7 +6,7 @@ const Routing = (
     <Router>
       <div>
         <Routes>  
-        <Route path="/" element={<Home />}></Route>
+        <Route path="/" element={<Home />} />
         <Route path="/Home" element={<Home />} />
         
         </Routes>

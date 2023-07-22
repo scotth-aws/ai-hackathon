@@ -1,8 +1,8 @@
 import React from 'react';
-//import ReactDOM from 'react-dom/client';
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom/client';
+//import ReactDOM from "react-dom";
 import './index.css';
-import App from './App';
+import Home from './Components/Home/index.jsx';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from "./serviceWorker";
 import Routing from "./Components/Router";
@@ -15,7 +15,13 @@ try {
 
   if (process.env.NODE_ENV == 'development')
     console.log('I am here');
-  ReactDOM.render(Routing, document.getElementById("root"));
+  const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+  //ReactDOM.render(Routing, document.getElementById("root"));
+  root.render(
+    <React.StrictMode>
+      <Home />
+    </React.StrictMode>
+  );
   serviceWorker.unregister();
 
 } catch (error) {

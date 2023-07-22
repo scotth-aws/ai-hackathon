@@ -350,21 +350,16 @@ const Content = (state) => {
                             {
                                 id: "outputs",
                                 content: (item) =>
-                                    item.OutputValue.substring(1, 4) !== "ttp" ? (
+                                    item.lectureTitle.substring(1, 4) !== "ttp" ? (
                                         <React.Fragment>
-                                            <TextContent>{item.OutputKey}</TextContent>
+                                            <TextContent>{item.lectureTitle}</TextContent>
 
-                                            <TextContent>{item.OutputValue}</TextContent>
-                                            <TextContent>{item.Description}</TextContent>
+                                         
                                         </React.Fragment>
                                     ) : (
                                         <React.Fragment>
-                                            <TextContent>{item.OutputKey}</TextContent>
+                                            <TextContent>{item.lectureTitle}</TextContent>
 
-                                            <Link href={item.OutputValue} target="_blank">
-                                                {item.OutputValue}
-                                            </Link>
-                                            <TextContent>{item.Description}</TextContent>
                                         </React.Fragment>
                                     ),
                             },
@@ -382,23 +377,7 @@ const Content = (state) => {
                     }
                     header={<Header variant="h2" description={summaryOutput}>Summary Output</Header>}
                 />
-                <Box>
-                    <Modal
-                        onDismiss={() => console.log('modal exit called here')}
-                        visible={visible}
-                        closeAriaLabel="Close modal"
-                        footer={
-                            <Box float="right">
-                                <SpaceBetween direction="horizontal" size="xs"></SpaceBetween>
-                            </Box>
-                        }
-                        header={deploymentHeader}
-                    >
-                        <TextContent>
-                            <strong style={{ color: alertColor }}>{alert}</strong>
-                        </TextContent>
-                    </Modal>
-                </Box>
+              
 
             </div>
 

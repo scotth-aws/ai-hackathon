@@ -15,7 +15,6 @@ const Navigation = (current_user) => {
 
 
     if (User.isLoggedIn) {
-        console.log('loggedIn');
 
         navigation_items.push({
             type: "section",
