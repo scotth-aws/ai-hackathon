@@ -180,8 +180,9 @@ const Content = (state) => {
                     );
 
                 //alert('Lecture Summaries Updated');
+                setAlertVisible(true);
 
-                window.location.reload(false);
+                //window.location.reload(false);
 
             },
         });
