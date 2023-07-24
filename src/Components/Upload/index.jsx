@@ -68,7 +68,7 @@ const Content = () => {
 
             try {
                 await Storage.put(value[0].name, value[0], {
-                    bucket: 'lecture-summary-input172043-dev',
+                    bucket: 'uploads-genaihackathon23',
                     progressCallback(progress) {
                         //console.log(`Uploaded: ${progress.loaded}/${progress.total}`);
                         setProgressBarValue((progress.loaded / progress.total) * 100);
