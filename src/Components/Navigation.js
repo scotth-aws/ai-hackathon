@@ -29,8 +29,8 @@ const Navigation = (current_user) => {
                 text: "Students",
                 expanded: true,
                 items: [
-                    { type: "link", text: "Generated Lecture Summaries", href: "/Home" },
-                    { type: "link", text: "Generated Questions From Lectures", href: "/Questions" }
+                    { type: "link", text: "Generated Lecture Summaries", href: "/Home" }
+                  
 
                 ]
             });
