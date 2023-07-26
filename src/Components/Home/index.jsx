@@ -20,6 +20,8 @@ import {
     ColumnLayout,
     Modal,
     Icon,
+    SpaceBetween,
+    RadioGroup
 
 } from "@cloudscape-design/components";
 import Navigation from "../Navigation";
@@ -38,7 +40,6 @@ import { onCreateHackathonLectureSummary } from "../../graphql/subscriptions.js"
 import awsconfig from "../../aws-exports";
 
 Amplify.configure(awsconfig);
-
 Storage.configure({
     AWSS3: {
         bucket: awsconfig.aws_user_files_s3_bucket,
@@ -49,6 +50,7 @@ Storage.configure({
         },
     },
 });
+
 
 const logger = new Logger("erdLogger", "DEBUG");
 const Content = (state) => {
@@ -64,6 +66,8 @@ const Content = (state) => {
         Math.ceil(items.length / 5)
     );
     const [alertColor, setAlertColor] = React.useState("blue");
+    const [radioGroupValue, setRadioGroupValue] = React.useState("English");
+    const [visible, setVisible] = React.useState(false);
 
 
     const setMatches = (detail) => {
@@ -93,22 +97,31 @@ const Content = (state) => {
         visibleContent: ["lectureTitle", "createdAt", "S3Location", "accountid"]
     });
     const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
-    const [visible, setVisible] = React.useState(false);
     const [deleteDisabled, setDeleteDisabled] = useState(true);
     const [alertVisible, setAlertVisible] = React.useState(false);
 
 
     const dismissAlert = (event) => {
         setAlertVisible(false);
+        window.location.reload(false);
     }
 
-    const getSummary = async (event) => {
-        if (process.env.NODE_ENV === 'development') {
-            //console.log("getSummary " + JSON.stringify(event));
-            console.log("****** getSelectedItem " + selectedItems[0].id);
+    const modalExit = () => {
+
+        setVisible(false)
+
+    }
+    const selectLanguage = async (event) => {
+        setVisible(false);
+        console.log("****** getSelectedItem " + selectedItems[0].id);
+        console.log("****** radioGroup " + radioGroupValue);
+        var folder = "summaries/english/"
+        if (radioGroupValue !== 'English') {
+            folder = "summaries/spanish/"
         }
+
         try {
-            const result = await Storage.get(selectedItems[0].id, { download: true });
+            const result = await Storage.get(folder + selectedItems[0].id, { download: true });
 
             // data.Body is a Blob
             result.Body.text().then((string) => {
@@ -119,6 +132,15 @@ const Content = (state) => {
         } catch (err) {
             console.log('get error ' + err);
         }
+    }
+
+    const getSummary = (event) => {
+        if (process.env.NODE_ENV === 'development') {
+            //console.log("getSummary " + JSON.stringify(event));
+            console.log("****** getSelectedItem " + selectedItems[0].id);
+            setVisible(true);
+        }
+
     }
 
     //console.log('items ' + JSON.stringify(items));
@@ -181,7 +203,7 @@ const Content = (state) => {
 
                 //alert('Lecture Summaries Updated');
                 setAlertVisible(true);
-                window.location.reload(false);
+
 
             },
         });
@@ -390,6 +412,40 @@ const Content = (state) => {
 
 
             </div>
+            <Box>
+                <Modal
+                    onDismiss={() => modalExit()}
+                    visible={visible}
+                    closeAriaLabel="Close modal"
+                    footer={
+                        <Box float="right">
+                            <SpaceBetween direction="horizontal" size="xs"></SpaceBetween>
+                        </Box>
+                    }
+                    header="Select Summary Language"
+                >
+                    <SpaceBetween direction="vertical" size="l">
+                        <RadioGroup
+                            onChange={({ detail }) => setRadioGroupValue(detail.value)}
+                            value={radioGroupValue}
+                            items={[
+                                { value: "English", label: "English" },
+                                { value: "Spanish", label: "Spanish" }
+                            ]} />
+
+
+
+                        <Button
+                            variant="primary"
+                            disabled={deleteDisabled}
+                            onClick={(event) => selectLanguage(event)}
+
+                        >
+                            Select
+                        </Button>
+                    </SpaceBetween>
+                </Modal>
+            </Box>
 
         </div>
     );
