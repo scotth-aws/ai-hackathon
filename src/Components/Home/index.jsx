@@ -135,10 +135,11 @@ const Content = (state) => {
     }
 
     const getSummary = (event) => {
+        console.log("****** getSelectedItem " + selectedItems[0].id);
+        setVisible(true);
         if (process.env.NODE_ENV === 'development') {
             //console.log("getSummary " + JSON.stringify(event));
-            console.log("****** getSelectedItem " + selectedItems[0].id);
-            setVisible(true);
+           
         }
 
     }
