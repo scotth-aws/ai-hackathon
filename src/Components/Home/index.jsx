@@ -113,7 +113,7 @@ const Content = (state) => {
     }
     const selectLanguage = async (event) => {
         setVisible(false);
-        console.log("****** getSelectedItem " + selectedItems[0].id);
+        console.log("****** getSelectedItem " + selectedItems[0].lectureSummaryS3Url);
         console.log("****** radioGroup " + radioGroupValue);
         var folder = "summaries/english/"
         if (radioGroupValue !== 'English') {
@@ -121,7 +121,7 @@ const Content = (state) => {
         }
 
         try {
-            const result = await Storage.get(folder + selectedItems[0].id, { download: true });
+            const result = await Storage.get(folder + selectedItems[0].lectureSummaryS3Url, { download: true });
 
             // data.Body is a Blob
             result.Body.text().then((string) => {
@@ -536,7 +536,32 @@ function Home() {
                     API.graphql(graphqlOperation(listHackathonLectureSummaries, {})).then((response, error) => {
 
                         console.log('listHackathonLectureSummaries ' + JSON.stringify(response.data.listHackathonLectureSummaries.items));
-                        setCompletedItems(response.data.listHackathonLectureSummaries.items);
+                        // Declare a new array
+                        let newArray = [];
+
+                        // Declare an empty object
+                        let uniqueObject = {};
+
+                        // Loop for the array elements
+                        for (let i in response.data.listHackathonLectureSummaries.items) {
+
+                            // Extract the title
+                            var objTitle = response.data.listHackathonLectureSummaries.items[i]['lectureTitle'];
+
+                            // Use the title as the index
+                            uniqueObject[objTitle] = response.data.listHackathonLectureSummaries.items[i];
+                        }
+
+                        // Loop to push unique object into array
+                        for (var i in uniqueObject) {
+                            newArray.push(uniqueObject[i]);
+                        }
+
+                        // Display the unique objects
+                        console.log('************* '+newArray);
+
+                        //setCompletedItems(response.data.listHackathonLectureSummaries.items);
+                        setCompletedItems(newArray);
 
                         setUser(current_user);
                         setIsLoading(false);
