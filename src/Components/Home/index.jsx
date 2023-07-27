@@ -111,6 +111,13 @@ const Content = (state) => {
         setVisible(false)
 
     }
+    function convertEpochToSpecificTimezone(timeEpoch, offset) {
+        //Convert epoch to human readable date
+        var myDate = new Date(timeEpoch * 1000);
+        var hr = myDate.toGMTString();
+        console.log(' human readable '+hr)
+        return hr;
+    }
     const selectLanguage = async (event) => {
         setVisible(false);
         console.log("****** getSelectedItem " + selectedItems[0].lectureSummaryS3Url);
@@ -254,7 +261,7 @@ const Content = (state) => {
                         {
                             id: "createdAt",
                             header: "Created Date",
-                            cell: (e) => e.createdAt,
+                            cell: (e) => convertEpochToSpecificTimezone(e.createdAt),
                         },
                         {
                             id: "lectureSummaryS3Url",

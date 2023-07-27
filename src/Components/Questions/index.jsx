@@ -102,6 +102,14 @@ const Content = (state) => {
         setAlertVisible(false);
     }
 
+    function convertEpochToSpecificTimezone(timeEpoch, offset) {
+        //Convert epoch to human readable date
+        var myDate = new Date(timeEpoch * 1000);
+        var hr = myDate.toGMTString();
+        console.log(' human readable '+hr)
+        return hr;
+    }
+
     const getSummary = async (event) => {
         if (process.env.NODE_ENV === 'development') {
             //console.log("getSummary " + JSON.stringify(event));
@@ -112,11 +120,11 @@ const Content = (state) => {
 
             // data.Body is a Blob
             //result.Body.text().then((string) => {
-                // handle the String data return String
-                //console.log('s3 body ' + string);
-                //setSummaryOutput(string);
+            // handle the String data return String
+            //console.log('s3 body ' + string);
+            //setSummaryOutput(string);
             //});
-            setSummaryOutput("When did the Civil War begin? \n When did it end?");
+            setSummaryOutput("Ability to ask questions coming soon . . . ");
         } catch (err) {
             console.log('get error ' + err);
         }
@@ -232,7 +240,7 @@ const Content = (state) => {
                         {
                             id: "createdAt",
                             header: "Created Date",
-                            cell: (e) => e.createdAt,
+                            cell: (e) => convertEpochToSpecificTimezone(e.createdAt),
                         },
                         {
                             id: "lectureSummaryS3Url",
@@ -285,7 +293,7 @@ const Content = (state) => {
                                 disabled={deleteDisabled}
                                 onClick={(event) => getSummary(event)}
                             >
-                                Get Questions
+                                Ask Questions
                             </Button>
 
                         </ColumnLayout>
@@ -386,7 +394,7 @@ const Content = (state) => {
                             </Box>
                         </Box>
                     }
-                    header={<Header variant="h2" description={summaryOutput}>Lecture Questions</Header>}
+                    header={<Header variant="h2" description={summaryOutput}>Ask Question</Header>}
                 />
 
 
@@ -425,7 +433,7 @@ const SideHelp = () => (
                 <li>
                     View the Questions gnerated from Lectures.
                 </li>
-               
+
 
             </ul>
 
@@ -478,7 +486,35 @@ function Questions() {
                     API.graphql(graphqlOperation(listHackathonLectureSummaries, {})).then((response, error) => {
 
                         console.log('listHackathonLectureSummaries ' + JSON.stringify(response.data.listHackathonLectureSummaries.items));
-                        setCompletedItems(response.data.listHackathonLectureSummaries.items);
+                        // Declare a new array
+                        let newArray = [];
+
+                        // Declare an empty object
+                        let uniqueObject = {};
+
+                        // Loop for the array elements
+                        for (let i in response.data.listHackathonLectureSummaries.items) {
+
+                            // Extract the title
+                            var objTitle = response.data.listHackathonLectureSummaries.items[i]['lectureTitle'];
+
+                            // Use the title as the index
+                            uniqueObject[objTitle] = response.data.listHackathonLectureSummaries.items[i];
+                        }
+
+                        // Loop to push unique object into array
+                        for (var i in uniqueObject) {
+                            newArray.push(uniqueObject[i]);
+                        }
+
+                        // Display the unique objects
+                        console.log('************* ' + newArray);
+
+                        //setCompletedItems(response.data.listHackathonLectureSummaries.items);
+                        setCompletedItems(newArray);
+
+
+                        //setCompletedItems(response.data.listHackathonLectureSummaries.items);
 
                         setUser(current_user);
                         setIsLoading(false);
