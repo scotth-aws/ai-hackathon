@@ -32,3 +32,10 @@ export const listHackathonLectureSummaries = /* GraphQL */ `
     }
   }
 `;
+export const getAnswer = /* GraphQL */ `
+  query GetAnswer($question: String!) {
+    getAnswer(question: $question) {
+      answer
+    }
+  }
+`;

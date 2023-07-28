@@ -20,12 +20,6 @@ import {
     ColumnLayout,
     Modal,
     Icon,
-    Input,
-    Form,
-    FormField,
-    SpaceBetween,
-    Spinner
-
 
 } from "@cloudscape-design/components";
 import Navigation from "../Navigation";
@@ -39,7 +33,7 @@ import {
 
 } from "aws-amplify";
 
-import { listHackathonLectureSummaries, getAnswer } from "../../graphql/queries.js";
+import { listHackathonLectureSummaries, getHackathonLectureSummary } from "../../graphql/queries.js";
 import { onCreateHackathonLectureSummary } from "../../graphql/subscriptions.js";
 import awsconfig from "../../aws-exports";
 
@@ -70,24 +64,6 @@ const Content = (state) => {
         Math.ceil(items.length / 5)
     );
     const [alertColor, setAlertColor] = React.useState("blue");
-    const [inputValue, setInputValue] = React.useState("");
-    const [inputValueDisabled, setInputValueDisabled] = React.useState(true);
-    const [inputSubmitButtonDisabled, setInputSubmitButtonDisabled] = React.useState(false);
-    const [answer, setAnswer] = React.useState("");
-    const [spinnerVisible,setSpinnerVisible] = React.useState(true);
-
-    const [deploymentHeader, setDeploymentHeader] = useState(
-        "Lecture Summary"
-    );
-    const [preferences, setPreferences] = React.useState({
-        pageSize: 10,
-        wrapLines: true,
-        visibleContent: ["lectureTitle", "createdAt", "S3Location", "accountid"]
-    });
-    const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
-    const [visible, setVisible] = React.useState(false);
-    const [deleteDisabled, setDeleteDisabled] = useState(true);
-    const [alertVisible, setAlertVisible] = React.useState(false);
 
 
     const setMatches = (detail) => {
@@ -108,7 +84,18 @@ const Content = (state) => {
         }
 
     };
-    
+    const [deploymentHeader, setDeploymentHeader] = useState(
+        "Lecture Summary"
+    );
+    const [preferences, setPreferences] = React.useState({
+        pageSize: 10,
+        wrapLines: true,
+        visibleContent: ["lectureTitle", "createdAt", "S3Location", "accountid"]
+    });
+    const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
+    const [visible, setVisible] = React.useState(false);
+    const [deleteDisabled, setDeleteDisabled] = useState(true);
+    const [alertVisible, setAlertVisible] = React.useState(false);
 
 
     const dismissAlert = (event) => {
@@ -119,17 +106,25 @@ const Content = (state) => {
         //Convert epoch to human readable date
         var myDate = new Date(timeEpoch * 1000);
         var hr = myDate.toGMTString();
-        //console.log(' human readable ' + hr)
+        console.log(' human readable '+hr)
         return hr;
     }
 
-    const getQuestion = async (event) => {
+    const getSummary = async (event) => {
         if (process.env.NODE_ENV === 'development') {
+            //console.log("getSummary " + JSON.stringify(event));
             console.log("****** getSelectedItem " + selectedItems[0].id);
         }
         try {
-            setInputValueDisabled(false);
-            //setSummaryOutput("Ability to ask questions coming soon . . . ");
+            //const result = await Storage.get(selectedItems[0].id, { download: true });
+
+            // data.Body is a Blob
+            //result.Body.text().then((string) => {
+            // handle the String data return String
+            //console.log('s3 body ' + string);
+            //setSummaryOutput(string);
+            //});
+            setSummaryOutput("Ability to ask questions coming soon . . . ");
         } catch (err) {
             console.log('get error ' + err);
         }
@@ -138,26 +133,7 @@ const Content = (state) => {
     //console.log('items ' + JSON.stringify(items));
 
 
-    const submitQuestion = (detail) => {
-        setAnswer('');
-        console.log('submitQuestion '+inputValue);
-        setInputSubmitButtonDisabled(true);
-        setInputValueDisabled(true);
-        //setSpinnerVisible(false);
-        const answerObject = { question: inputValue };
-        API.graphql(graphqlOperation(getAnswer, answerObject)).then((response, error) => {
 
-            console.log('getAnswer ' + response.data.getAnswer.answer);
-            
-            setInputValueDisabled(false);
-            setInputSubmitButtonDisabled(false);
-            setAnswer(response.data.getAnswer.answer);
-            //setSpinnerVisible(true);
-
-
-        })
-
-    }
     const search = (detail) => {
 
         var searchString = detail.filteringText;
@@ -315,7 +291,7 @@ const Content = (state) => {
                             <Button
                                 variant="primary"
                                 disabled={deleteDisabled}
-                                onClick={(event) => getQuestion(event)}
+                                onClick={(event) => getSummary(event)}
                             >
                                 Ask Questions
                             </Button>
@@ -393,10 +369,18 @@ const Content = (state) => {
                             {
                                 id: "outputs",
                                 content: (item) =>
-                                    <React.Fragment>
+                                    item.lectureTitle.substring(1, 4) !== "ttp" ? (
+                                        <React.Fragment>
+                                            <TextContent>{item.lectureTitle}</TextContent>
 
-                                    </React.Fragment>
 
+                                        </React.Fragment>
+                                    ) : (
+                                        <React.Fragment>
+                                            <TextContent>{item.lectureTitle}</TextContent>
+
+                                        </React.Fragment>
+                                    ),
                             },
                         ],
                     }}
@@ -406,30 +390,12 @@ const Content = (state) => {
                     empty={
                         <Box textAlign="center" color="inherit">
                             <Box padding={{ bottom: "s" }} variant="p" color="inherit">
-                                <Form
-                                    actions={
-                                        <SpaceBetween direction="horizontal" size="xs">
-                                            <Button formAction="none" variant="link"> Cancel</Button>
-                                            <Button disabled={inputSubmitButtonDisabled} onClick={(event) => submitQuestion(event)} variant="primary">Submit</Button>
-                                        </SpaceBetween>}
-                                >
-                                    <FormField label="Input field">
-                                        <Input
-                                            onChange={({ detail }) => setInputValue(detail.value)}
-                                            value={inputValue}
-                                            disabled={inputValueDisabled}
-                                        />
-                                       
-                                        <TextContent>{answer}</TextContent>
-                                    </FormField>
-                                </Form>
 
                             </Box>
                         </Box>
                     }
-                    header={<Header variant="h2" description={summaryOutput}>Ask Question</Header>} />
-
-
+                    header={<Header variant="h2" description={summaryOutput}>Ask Question</Header>}
+                />
 
 
             </div>
