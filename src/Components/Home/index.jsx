@@ -94,7 +94,7 @@ const Content = (state) => {
     const [preferences, setPreferences] = React.useState({
         pageSize: 10,
         wrapLines: true,
-        visibleContent: ["lectureTitle", "createdAt", "S3Location", "accountid"]
+        visibleContent: ["lectureTitle", "createdAt", ]
     });
     const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
     const [deleteDisabled, setDeleteDisabled] = useState(true);
@@ -283,7 +283,7 @@ const Content = (state) => {
                     visibleColumns={[
                         "lectureTitle",
                         "createdAt",
-                        "lectureSummaryS3Url",
+                       
 
                     ]}
                     empty={
@@ -307,7 +307,7 @@ const Content = (state) => {
                             <Header
 
                             >
-                                Summaries
+                                Lecture Summaries
                             </Header>
                             <Button
                                 variant="primary"
@@ -342,8 +342,8 @@ const Content = (state) => {
                                 visibleContent: [
                                     "Lecture Title",
                                     "createdAt",
-                                    "S3 Location",
-                                    "accountid",
+                 
+                      
                                 ],
                             }}
                             pageSizePreference={{

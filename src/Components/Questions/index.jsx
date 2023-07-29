@@ -70,11 +70,11 @@ const Content = (state) => {
         Math.ceil(items.length / 5)
     );
     const [alertColor, setAlertColor] = React.useState("blue");
-    const [inputValue, setInputValue] = React.useState("");
+    const [inputValue, setInputValue] = React.useState("What are reactions that happen with oxygen and carbon containing matter?");
     const [inputValueDisabled, setInputValueDisabled] = React.useState(true);
     const [inputSubmitButtonDisabled, setInputSubmitButtonDisabled] = React.useState(false);
     const [answer, setAnswer] = React.useState("");
-    const [spinnerVisible,setSpinnerVisible] = React.useState(true);
+    const [spinnerVisible, setSpinnerVisible] = React.useState(true);
 
     const [deploymentHeader, setDeploymentHeader] = useState(
         "Lecture Summary"
@@ -82,7 +82,7 @@ const Content = (state) => {
     const [preferences, setPreferences] = React.useState({
         pageSize: 10,
         wrapLines: true,
-        visibleContent: ["lectureTitle", "createdAt", "S3Location", "accountid"]
+        visibleContent: ["lectureTitle", "createdAt", ]
     });
     const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
@@ -108,7 +108,7 @@ const Content = (state) => {
         }
 
     };
-    
+
 
 
     const dismissAlert = (event) => {
@@ -140,22 +140,36 @@ const Content = (state) => {
 
     const submitQuestion = (detail) => {
         setAnswer('');
-        console.log('submitQuestion '+inputValue);
+        if (inputValue === '') {
+            return;
+        }
+        console.log('submitQuestion ' + inputValue);
         setInputSubmitButtonDisabled(true);
         setInputValueDisabled(true);
         //setSpinnerVisible(false);
         const answerObject = { question: inputValue };
-        API.graphql(graphqlOperation(getAnswer, answerObject)).then((response, error) => {
+        try {
+            API.graphql(graphqlOperation(getAnswer, answerObject)).then((response, error) => {
 
-            console.log('getAnswer ' + response.data.getAnswer.answer);
-            
-            setInputValueDisabled(false);
-            setInputSubmitButtonDisabled(false);
-            setAnswer(response.data.getAnswer.answer);
-            //setSpinnerVisible(true);
+                if (error) {
+                    console.log(error)
+                } else {
+                    var response = JSON.stringify(response.data.getAnswer.answer);
+                    console.log('getAnswer ' + response);
+                    var a = response.substring(response.lastIndexOf('=') + 3, response.length - 4);
+
+                    setInputValueDisabled(false);
+                    setInputSubmitButtonDisabled(false);
+                    setAnswer(a);
+                    //setSpinnerVisible(true);
+                }
 
 
-        })
+            })
+        } catch (err) {
+            setAnswer("oh shit!");
+            console.log(err)
+        }
 
     }
     const search = (detail) => {
@@ -286,7 +300,7 @@ const Content = (state) => {
                     visibleColumns={[
                         "lectureTitle",
                         "createdAt",
-                        "lectureSummaryS3Url",
+                       
 
                     ]}
                     empty={
@@ -310,7 +324,7 @@ const Content = (state) => {
                             <Header
 
                             >
-                                Lectures
+                                Lecture Questions
                             </Header>
                             <Button
                                 variant="primary"
@@ -345,8 +359,7 @@ const Content = (state) => {
                                 visibleContent: [
                                     "Lecture Title",
                                     "createdAt",
-                                    "S3 Location",
-                                    "accountid",
+                                  
                                 ],
                             }}
                             pageSizePreference={{
@@ -414,13 +427,15 @@ const Content = (state) => {
                                         </SpaceBetween>}
                                 >
                                     <FormField label="Input field">
-                                        <Input
-                                            onChange={({ detail }) => setInputValue(detail.value)}
-                                            value={inputValue}
-                                            disabled={inputValueDisabled}
-                                        />
-                                       
-                                        <TextContent>{answer}</TextContent>
+                                        <SpaceBetween direction="vertical" size="l">
+                                            <Input
+                                                onChange={({ detail }) => setInputValue(detail.value)}
+                                                value={inputValue}
+                                                disabled={inputValueDisabled}
+                                            />
+
+                                            <TextContent>{answer}</TextContent>
+                                        </SpaceBetween>
                                     </FormField>
                                 </Form>
 

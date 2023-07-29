@@ -20,6 +20,10 @@ import {
     ColumnLayout,
     Modal,
     Icon,
+    FormField,
+    Form,
+    SpaceBetween,
+    Link,
 
 } from "@cloudscape-design/components";
 import Navigation from "../Navigation";
@@ -41,7 +45,7 @@ Amplify.configure(awsconfig);
 
 Storage.configure({
     AWSS3: {
-        bucket: awsconfig.aws_user_files_s3_bucket,
+        bucket: "uploads-genaihackathon23",
         region: 'us-east-1',
         level: "public",
         customPrefix: {
@@ -64,6 +68,7 @@ const Content = (state) => {
         Math.ceil(items.length / 5)
     );
     const [alertColor, setAlertColor] = React.useState("blue");
+    const [linkText, setLinkText] = React.useState('');
 
 
     const setMatches = (detail) => {
@@ -85,7 +90,7 @@ const Content = (state) => {
 
     };
     const [deploymentHeader, setDeploymentHeader] = useState(
-        "Lecture Summary"
+        "Full Lecture Audio/Video Files"
     );
     const [preferences, setPreferences] = React.useState({
         pageSize: 10,
@@ -96,6 +101,8 @@ const Content = (state) => {
     const [visible, setVisible] = React.useState(false);
     const [deleteDisabled, setDeleteDisabled] = useState(true);
     const [alertVisible, setAlertVisible] = React.useState(false);
+    const [inputSubmitButtonDisabled, setInputSubmitButtonDisabled] = React.useState(false);
+    const[signedUrl,setSignedUrl] = React.useState("");
 
 
     const dismissAlert = (event) => {
@@ -106,25 +113,37 @@ const Content = (state) => {
         //Convert epoch to human readable date
         var myDate = new Date(timeEpoch * 1000);
         var hr = myDate.toGMTString();
-        console.log(' human readable '+hr)
+
         return hr;
     }
 
-    const getSummary = async (event) => {
-        if (process.env.NODE_ENV === 'development') {
-            //console.log("getSummary " + JSON.stringify(event));
-            console.log("****** getSelectedItem " + selectedItems[0].id);
-        }
+    const getDownload = async (event) => {
+        setLinkText('');
+        console.log('selectedItem '+JSON.stringify(selectedItems[0]['lectureTitle']));
         try {
-            //const result = await Storage.get(selectedItems[0].id, { download: true });
+            if (selectedItems[0]['lectureTitle'] === 'Intro To Solid State Chemistry') {
+                var s3obj = 'Intro-to-Solid-State-Chemistry.mp4';
+            } else {
+                var s3obj = 'Intro-to-Solid-State-Chemistry-Periodic-Table.mp4';
+            }
+            console.log('s3 '+s3obj);
+            const result = await Storage.get(s3obj, { 
+                bucket: 'uploads-genaihackathon23',
+                download: false,
+                progressCallback(progress) {
+                    console.log(`Downloaded: ${progress.loaded}/${progress.total}`);
+                    //setProgressBarValue((progress.loaded / progress.total) * 100);
+                },
+            });
+            console.log(result);
+            setLinkText('Here is your Lecture');
+            setSignedUrl(result);
 
-            // data.Body is a Blob
-            //result.Body.text().then((string) => {
-            // handle the String data return String
-            //console.log('s3 body ' + string);
-            //setSummaryOutput(string);
-            //});
-            setSummaryOutput("Ability to ask questions coming soon . . . ");
+          
+
+
+
+
         } catch (err) {
             console.log('get error ' + err);
         }
@@ -262,7 +281,7 @@ const Content = (state) => {
                     visibleColumns={[
                         "lectureTitle",
                         "createdAt",
-                        "lectureSummaryS3Url",
+                        
 
                     ]}
                     empty={
@@ -286,15 +305,12 @@ const Content = (state) => {
                             <Header
 
                             >
-                                Lectures
+                                Download Lectures
                             </Header>
-                            <Button
-                                variant="primary"
-                                disabled={deleteDisabled}
-                                onClick={(event) => getSummary(event)}
-                            >
-                                Ask Questions
-                            </Button>
+
+                            <Button  onClick={(event) => getDownload(event)}>Download</Button>
+                          
+                           
 
                         </ColumnLayout>
                     }
@@ -369,15 +385,14 @@ const Content = (state) => {
                             {
                                 id: "outputs",
                                 content: (item) =>
-                                    item.lectureTitle.substring(1, 4) !== "ttp" ? (
+                                    item.lectureTitle.substring(1, 4) !== "genAi" ? (
                                         <React.Fragment>
-                                            <TextContent>{item.lectureTitle}</TextContent>
 
 
                                         </React.Fragment>
                                     ) : (
                                         <React.Fragment>
-                                            <TextContent>{item.lectureTitle}</TextContent>
+
 
                                         </React.Fragment>
                                     ),
@@ -389,12 +404,10 @@ const Content = (state) => {
                     loadingText="Loading resources"
                     empty={
                         <Box textAlign="center" color="inherit">
-                            <Box padding={{ bottom: "s" }} variant="p" color="inherit">
-
-                            </Box>
+                         <Link external href={signedUrl}>{linkText}</Link>
                         </Box>
                     }
-                    header={<Header variant="h2" description={summaryOutput}>Ask Question</Header>}
+                    header={<Header variant="h2" description={summaryOutput}></Header>}
                 />
 
 
@@ -424,14 +437,14 @@ const SideHelp = () => (
                 </ul>
             </div>
         }
-        header={<h2>Lecture Questions Help</h2>}
+        header={<h2>Download Lecture Download Help</h2>}
     >
         <div>
 
             <h3>From here you can :</h3>
             <ul>
                 <li>
-                    View the Questions gnerated from Lectures.
+                    Download full Lecture Audio/Video.
                 </li>
 
 
@@ -442,7 +455,7 @@ const SideHelp = () => (
     </HelpPanel>
 );
 
-function Questions() {
+function LectureDownload() {
     const [User, setUser] = useState({});
     const [completedItems, setCompletedItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -581,4 +594,4 @@ function Questions() {
     }
 }
 
-export default withAuthenticator(Questions);
+export default withAuthenticator(LectureDownload);

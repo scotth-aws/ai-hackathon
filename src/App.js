@@ -2,6 +2,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom"
 import Home from "./Components/Home/index.jsx"
 import Questions from "./Components/Questions/index.jsx"
 import Upload from "./Components/Upload/index.jsx"
+import LectureDownload from "./Components/LectureDownload/index.jsx"
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
            <Route path="/Home" element={<Home />} />
            <Route path="/Upload" element={<Upload />} />
            <Route path="/Questions" element={<Questions />} />
+           <Route path="/LectureDownload" element={<LectureDownload />} />
       
        </Routes>
      </BrowserRouter>
