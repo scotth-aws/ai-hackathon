@@ -72,9 +72,9 @@ const Content = (state) => {
     const [alertColor, setAlertColor] = React.useState("blue");
     const [inputValue, setInputValue] = React.useState("What are reactions that happen with oxygen and carbon containing matter?");
     const [inputValueDisabled, setInputValueDisabled] = React.useState(true);
-    const [inputSubmitButtonDisabled, setInputSubmitButtonDisabled] = React.useState(false);
+    const [inputSubmitButtonDisabled, setInputSubmitButtonDisabled] = React.useState(true);
     const [answer, setAnswer] = React.useState("");
-    const [spinnerVisible, setSpinnerVisible] = React.useState(true);
+    const [spinnerVisible, setSpinnerVisible] = React.useState(false);
 
     const [deploymentHeader, setDeploymentHeader] = useState(
         "Lecture Summary"
@@ -129,7 +129,8 @@ const Content = (state) => {
         }
         try {
             setInputValueDisabled(false);
-            //setSummaryOutput("Ability to ask questions coming soon . . . ");
+            setInputSubmitButtonDisabled(false);
+          
         } catch (err) {
             console.log('get error ' + err);
         }
@@ -139,16 +140,16 @@ const Content = (state) => {
 
 
     const submitQuestion = (detail) => {
-        setAnswer('');
         if (inputValue === '') {
             return;
         }
-        console.log('submitQuestion ' + inputValue);
+        
         setInputSubmitButtonDisabled(true);
         setInputValueDisabled(true);
-        //setSpinnerVisible(false);
-        const answerObject = { question: inputValue };
+        setSpinnerVisible(false);
+        const answerObject = { question: {inputValue} };
         try {
+            console.log('submitQuestion ' + inputValue);
             API.graphql(graphqlOperation(getAnswer, answerObject)).then((response, error) => {
 
                 if (error) {
@@ -156,12 +157,15 @@ const Content = (state) => {
                 } else {
                     var response = JSON.stringify(response.data.getAnswer.answer);
                     console.log('getAnswer ' + response);
-                    var a = response.substring(response.lastIndexOf('=') + 3, response.length - 4);
+                    response = response.replaceAll("\\","");
+                    response = response.replaceAll('"',"");
+                    var a = response.substring(response.lastIndexOf('=') + 2, response.length - 2);
+
 
                     setInputValueDisabled(false);
                     setInputSubmitButtonDisabled(false);
                     setAnswer(a);
-                    //setSpinnerVisible(true);
+                    setSpinnerVisible(true);
                 }
 
 
@@ -433,7 +437,7 @@ const Content = (state) => {
                                                 value={inputValue}
                                                 disabled={inputValueDisabled}
                                             />
-
+                                           
                                             <TextContent>{answer}</TextContent>
                                         </SpaceBetween>
                                     </FormField>
