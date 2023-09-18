@@ -43,7 +43,7 @@ Amplify.configure(awsconfig);
 Storage.configure({
     AWSS3: {
         bucket: awsconfig.aws_user_files_s3_bucket,
-        region: 'us-east-1',
+        region: 'us-west-2',
         level: "public",
         customPrefix: {
             public: "",
@@ -94,7 +94,7 @@ const Content = (state) => {
     const [preferences, setPreferences] = React.useState({
         pageSize: 10,
         wrapLines: true,
-        visibleContent: ["lectureTitle", "createdAt", ]
+        visibleContent: ["lectureTitle", "createdAt",]
     });
     const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
     const [deleteDisabled, setDeleteDisabled] = useState(true);
@@ -115,19 +115,19 @@ const Content = (state) => {
         //Convert epoch to human readable date
         var myDate = new Date(timeEpoch * 1000);
         var hr = myDate.toGMTString();
-        console.log(' human readable '+hr)
+        console.log(' human readable ' + hr)
         return hr;
     }
     const selectLanguage = async (event) => {
         setVisible(false);
-        console.log("****** getSelectedItem " + selectedItems[0].lectureSummaryS3Url);
-        console.log("****** radioGroup " + radioGroupValue);
+    
         var folder = "summaries/english/"
         if (radioGroupValue !== 'English') {
             folder = "summaries/spanish/"
         }
 
         try {
+           
             const result = await Storage.get(folder + selectedItems[0].lectureSummaryS3Url, { download: true });
 
             // data.Body is a Blob
@@ -146,7 +146,7 @@ const Content = (state) => {
         setVisible(true);
         if (process.env.NODE_ENV === 'development') {
             //console.log("getSummary " + JSON.stringify(event));
-           
+
         }
 
     }
@@ -283,7 +283,7 @@ const Content = (state) => {
                     visibleColumns={[
                         "lectureTitle",
                         "createdAt",
-                       
+
 
                     ]}
                     empty={
@@ -342,8 +342,8 @@ const Content = (state) => {
                                 visibleContent: [
                                     "Lecture Title",
                                     "createdAt",
-                 
-                      
+
+
                                 ],
                             }}
                             pageSizePreference={{
@@ -536,36 +536,44 @@ function Home() {
                     )
                         current_user.isAdmin = true;
 
-                    if (process.env.NODE_ENV === 'development')
-                        console.log('API.graphql(graphqlOperation(listHackathonLectureSummaries, searchObject)) being called  .  .  . ');
+                    //if (process.env.NODE_ENV === 'development')
+                    //console.log('API.graphql(graphqlOperation(listHackathonLectureSummaries, searchObject)) being called  .  .  . ');
 
                     const costObject = { id: "myId" };
                     API.graphql(graphqlOperation(listHackathonLectureSummaries, {})).then((response, error) => {
 
-                        console.log('listHackathonLectureSummaries ' + JSON.stringify(response.data.listHackathonLectureSummaries.items));
+                        //console.log('listHackathonLectureSummaries ' + JSON.stringify(response.data.listHackathonLectureSummaries.items));
                         // Declare a new array
                         let newArray = [];
 
                         // Declare an empty object
                         let uniqueObject = {};
 
-                        // Loop for the array elements
-                        for (let i in response.data.listHackathonLectureSummaries.items) {
+                        if (response.data.listHackathonLectureSummaries === null) {
 
-                            // Extract the title
-                            var objTitle = response.data.listHackathonLectureSummaries.items[i]['lectureTitle'];
+                            console.log('null');
+                        } else {
+                            console.log(response.data.listHackathonLectureSummaries);
 
-                            // Use the title as the index
-                            uniqueObject[objTitle] = response.data.listHackathonLectureSummaries.items[i];
+
+                            // Loop for the array elements
+                            for (let i in response.data.listHackathonLectureSummaries.items) {
+
+                                // Extract the title
+                                var objTitle = response.data.listHackathonLectureSummaries.items[i]['lectureTitle'];
+
+                                // Use the title as the index
+                                uniqueObject[objTitle] = response.data.listHackathonLectureSummaries.items[i];
+                            }
+
+                            // Loop to push unique object into array
+                            for (var i in uniqueObject) {
+                                newArray.push(uniqueObject[i]);
+                            }
+
+                            // Display the unique objects
+                            console.log('************* ' + newArray);
                         }
-
-                        // Loop to push unique object into array
-                        for (var i in uniqueObject) {
-                            newArray.push(uniqueObject[i]);
-                        }
-
-                        // Display the unique objects
-                        console.log('************* '+newArray);
 
                         //setCompletedItems(response.data.listHackathonLectureSummaries.items);
                         setCompletedItems(newArray);

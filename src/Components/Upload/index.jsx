@@ -37,9 +37,9 @@ Amplify.configure(awsconfig);
 
 Storage.configure({
     AWSS3: {
-        //bucket: awsconfig.aws_user_files_s3_bucket,
-        bucket: 'lecture-summary-input172043-dev',
-        region: 'us-east-1',
+        
+        bucket: 'scotth-uploads-genaihackathon23',
+        region: 'us-west-2',
         level: "public",
         customPrefix: {
             public: "",
@@ -68,7 +68,7 @@ const Content = () => {
 
             try {
                 await Storage.put(value[0].name, value[0], {
-                    bucket: 'uploads-genaihackathon23',
+                    bucket: 'scotth-uploads-genaihackathon23',
                     progressCallback(progress) {
                         //console.log(`Uploaded: ${progress.loaded}/${progress.total}`);
                         setProgressBarValue((progress.loaded / progress.total) * 100);

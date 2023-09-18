@@ -47,8 +47,8 @@ Amplify.configure(awsconfig);
 
 Storage.configure({
     AWSS3: {
-        bucket: awsconfig.aws_user_files_s3_bucket,
-        region: 'us-east-1',
+        bucket: 'scotth-outputs-genaihackathon23',
+        region: 'us-west-2',
         level: "public",
         customPrefix: {
             public: "",
@@ -82,7 +82,7 @@ const Content = (state) => {
     const [preferences, setPreferences] = React.useState({
         pageSize: 10,
         wrapLines: true,
-        visibleContent: ["lectureTitle", "createdAt", ]
+        visibleContent: ["lectureTitle", "createdAt",]
     });
     const [selectedItemsOutputs, setSelectedItemsOutputs] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
@@ -130,7 +130,7 @@ const Content = (state) => {
         try {
             setInputValueDisabled(false);
             setInputSubmitButtonDisabled(false);
-          
+
         } catch (err) {
             console.log('get error ' + err);
         }
@@ -143,11 +143,13 @@ const Content = (state) => {
         if (inputValue === '') {
             return;
         }
-        
+
+        console.log('inputValue ' + inputValue);
+
         setInputSubmitButtonDisabled(true);
         setInputValueDisabled(true);
         setSpinnerVisible(false);
-        const answerObject = { question: {inputValue} };
+        const answerObject = { question: inputValue };
         try {
             console.log('submitQuestion ' + inputValue);
             API.graphql(graphqlOperation(getAnswer, answerObject)).then((response, error) => {
@@ -155,10 +157,11 @@ const Content = (state) => {
                 if (error) {
                     console.log(error)
                 } else {
+                    console.log('getAnswer ' + JSON.stringify(response));
                     var response = JSON.stringify(response.data.getAnswer.answer);
                     console.log('getAnswer ' + response);
-                    response = response.replaceAll("\\","");
-                    response = response.replaceAll('"',"");
+                    response = response.replaceAll("\\", "");
+                    response = response.replaceAll('"', "");
                     var a = response.substring(response.lastIndexOf('=') + 2, response.length - 2);
 
 
@@ -171,8 +174,11 @@ const Content = (state) => {
 
             })
         } catch (err) {
-            setAnswer("oh shit!");
+            setAnswer("Excpetion thrown ");
             console.log(err)
+            setInputValueDisabled(false);
+            setInputSubmitButtonDisabled(false);
+            setSpinnerVisible(true);
         }
 
     }
@@ -304,7 +310,7 @@ const Content = (state) => {
                     visibleColumns={[
                         "lectureTitle",
                         "createdAt",
-                       
+
 
                     ]}
                     empty={
@@ -363,7 +369,7 @@ const Content = (state) => {
                                 visibleContent: [
                                     "Lecture Title",
                                     "createdAt",
-                                  
+
                                 ],
                             }}
                             pageSizePreference={{
@@ -437,7 +443,7 @@ const Content = (state) => {
                                                 value={inputValue}
                                                 disabled={inputValueDisabled}
                                             />
-                                           
+
                                             <TextContent>{answer}</TextContent>
                                         </SpaceBetween>
                                     </FormField>

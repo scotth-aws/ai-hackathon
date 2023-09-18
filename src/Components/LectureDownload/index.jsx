@@ -121,14 +121,14 @@ const Content = (state) => {
         setLinkText('');
         console.log('selectedItem '+JSON.stringify(selectedItems[0]['lectureTitle']));
         try {
-            if (selectedItems[0]['lectureTitle'] === 'Intro To Solid State Chemistry') {
-                var s3obj = 'Intro-to-Solid-State-Chemistry.mp4';
+            if (selectedItems[0]['lectureTitle'] === 'Prinicpals of Chemical Science') {
+                var s3obj = 'Prinicpals-of-Chemical-Science.mp4';
             } else {
-                var s3obj = 'Intro-to-Solid-State-Chemistry-Periodic-Table.mp4';
+                var s3obj = 'Intro-to-Solid-State-Chemistry.mp4';
             }
             console.log('s3 '+s3obj);
             const result = await Storage.get(s3obj, { 
-                bucket: 'uploads-genaihackathon23',
+                bucket: 'scotth-uploads-genaihackathon23',
                 download: false,
                 progressCallback(progress) {
                     console.log(`Downloaded: ${progress.loaded}/${progress.total}`);
