@@ -42,7 +42,7 @@ import awsconfig from "../../aws-exports";
 Amplify.configure(awsconfig);
 Storage.configure({
     AWSS3: {
-        bucket: awsconfig.aws_user_files_s3_bucket,
+        bucket: 'scotth-outputs-genaihackathon23',
         region: 'us-west-2',
         level: "public",
         customPrefix: {

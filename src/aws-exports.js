@@ -34,7 +34,7 @@ const awsmobile = {
             "region": "us-west-2"
         }
     ],
-    "aws_user_files_s3_bucket": "lecture-summary-output191539-main",
+    "aws_user_files_s3_bucket": "scotth-outputs-genaihackathon23",
     "aws_user_files_s3_bucket_region": "us-west-2"
 };
 
