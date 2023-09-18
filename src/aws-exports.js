@@ -3,6 +3,9 @@
 
 const awsmobile = {
     "aws_project_region": "us-west-2",
+    "aws_appsync_graphqlEndpoint": "https://xwoznfkdczejpmodt3zcgz3mdy.appsync-api.us-west-2.amazonaws.com/graphql",
+    "aws_appsync_region": "us-west-2",
+    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
     "aws_cognito_identity_pool_id": "us-west-2:6152f07c-9e17-47b5-8a2b-ae1d807c852e",
     "aws_cognito_region": "us-west-2",
     "aws_user_pools_id": "us-west-2_ycZWNH0KC",
@@ -24,17 +27,14 @@ const awsmobile = {
     "aws_cognito_verification_mechanisms": [
         "EMAIL"
     ],
-    "aws_appsync_graphqlEndpoint": "https://xwoznfkdczejpmodt3zcgz3mdy.appsync-api.us-west-2.amazonaws.com/graphql",
-    "aws_appsync_region": "us-west-2",
-    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
     "aws_dynamodb_all_tables_region": "us-west-2",
     "aws_dynamodb_table_schemas": [
         {
-            "tableName": "HackathonLectureDB-dev",
+            "tableName": "HackathonLectureDB-main",
             "region": "us-west-2"
         }
     ],
-    "aws_user_files_s3_bucket": "scotth-outputs-genaihackathon23",
+    "aws_user_files_s3_bucket": "lecture-summary-output191539-main",
     "aws_user_files_s3_bucket_region": "us-west-2"
 };
 
