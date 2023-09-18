@@ -128,8 +128,7 @@ const Content = (state) => {
 
         try {
            
-            const result = await Storage.get(folder + selectedItems[0].lectureSummaryS3Url, { download: true });
-
+            const result = await Storage.get(folder + selectedItems[0].lectureSummaryS3Url, { bucket: 'scotth-outputs-genaihackathon23', download: true });
             // data.Body is a Blob
             result.Body.text().then((string) => {
                 // handle the String data return String
