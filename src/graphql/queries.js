@@ -39,3 +39,11 @@ export const getAnswer = /* GraphQL */ `
     }
   }
 `;
+
+export const genQuestions = /* GraphQL */ `
+  query GenQuestions($context: String!) {
+    genQuestions(context: $context) {
+      response
+    }
+  }
+`;

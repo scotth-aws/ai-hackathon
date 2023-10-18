@@ -31,6 +31,7 @@ const Navigation = (current_user) => {
                 items: [
                     { type: "link", text: "Generated Lecture Summaries", href: "/Home" },
                     { type: "link", text: "Download Lecture Audio/Video", href: "/LectureDownload" },
+                    { type: "link", text: "Generate Quiz Questions", href: "/GenQuestions" },
                     { type: "link", text: "Lecture Q&A", href: "/Questions" },
 
                   
