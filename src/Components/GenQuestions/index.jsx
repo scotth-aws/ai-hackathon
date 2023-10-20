@@ -73,9 +73,9 @@ const Content = (state) => {
     const [inputValue, setInputValue] = React.useState("What are reactions that happen with oxygen and carbon containing matter?");
     const [inputValueDisabled, setInputValueDisabled] = React.useState(true);
     const [inputSubmitButtonDisabled, setInputSubmitButtonDisabled] = React.useState(true);
-    const [answer, setAnswer] = React.useState("");
+    const [answer, setAnswer] = React.useState([]);
     const [spinnerVisible, setSpinnerVisible] = React.useState(false);
-
+    var [formattedText, setFormattedText] = React.useState([]);
     const [deploymentHeader, setDeploymentHeader] = useState(
         "Lecture Summary"
     );
@@ -140,6 +140,7 @@ const Content = (state) => {
 
 
     const submitQuestion = (detail) => {
+        setAnswer([]);
         if (inputValue === '') {
             return;
         }
@@ -157,24 +158,47 @@ const Content = (state) => {
                 if (error) {
                     console.log(error)
                 } else {
-                    console.log('genQuestions ' + JSON.stringify(response));
+                    console.log('genQuestions RESPONSE ' + JSON.stringify(response));
                     var response = JSON.stringify(response.data.genQuestions.response);
                     console.log('genQuestions ' + response);
                     response = response.replaceAll("\\", "");
                     response = response.replaceAll('"', "");
+
                     var a = response.substring(response.lastIndexOf('=') + 2, response.length - 2);
+                    const splitResponse = a.split("nn");
 
+                    
+                    var splitFormattedText = [];
+                    for (var i = 0; i < splitResponse.length; i++) {
+                        splitFormattedText[i] = JSON.parse('{"question":'  + '\"'+splitResponse[i] +'\"}') ;
+                        console.log(splitFormattedText[i]);
+                        //if (i < splitResponse.length-1) {
+                        //    splitFormattedText[i] += ",";
+                        //}
+                    }
+                    console.log(' splitFormattedText ' + splitFormattedText);
+/*
+                    var test = [
+                        {"question": "response:  Here are 5 potential questions from the lecture transcript:"},
+                        {"question": "1. What is the main goal of this class according to Professor Grossman?"},
+                        {"question": "2. What are some examples that Professor Grossman gives for how materials can be used in new ways to solve problems?" },
+                        {"question": "3. What does Professor Grossman say is the key to understanding materials properties? "},
+                        {"question": "4. According to the lecture, what was significant about the scientific method for the development of chemistry?"},
+                        {"question": "5. How does Professor Grossman describe the unique age we live in today?"}
+                      ]
+*/
 
+                    setFormattedText(splitFormattedText);
                     setInputValueDisabled(false);
                     setInputSubmitButtonDisabled(false);
-                    setAnswer(a);
+                    setAnswer(formattedText);
                     setSpinnerVisible(true);
                 }
 
 
             })
         } catch (err) {
-            setAnswer("Excpetion thrown ");
+            setAnswer(['Exception Thrown']);
             console.log(err)
             setInputValueDisabled(false);
             setInputSubmitButtonDisabled(false);
@@ -423,25 +447,56 @@ const Content = (state) => {
                             },
                         ],
                     }}
-                    cardsPerRow={[{ cards: 1 }, { minWidth: 300, cards: 2 }]}
+                    cardsPerRow={[{ cards: 1 }, { minWidth: 400, cards: 2 }]}
                     items={selectedItemsOutputs}
                     loadingText="Loading resources"
                     empty={
                         <Box textAlign="center" color="inherit">
                             <Box padding={{ bottom: "s" }} variant="p" color="inherit">
+                            <SpaceBetween direction="vertical" size="l">
+                                            <Table
+                                                columnDefinitions={[
+                                                    {
+                                                        id: "question",
+                                                        header: "Question",
+                                                        cell: e => e.question,
+                                                        sortingField: "question",
+                                                        isRowHeader: true
+                                                    }
+                                                    
+                                                ]}
+                                                items={formattedText}
+                                                loadingText="Loading resources"
+                                                empty={
+                                                    <Box
+                                                        margin={{ vertical: "xs" }}
+                                                        textAlign="center"
+                                                        color="inherit"
+                                                    >
+                                                        <SpaceBetween size="m">
+                                                           
+                                                        </SpaceBetween>
+                                                    </Box>
+                                                }
+                                               
+                                                header={<Header>Generated Questions</Header>}
+                                                pagination={
+                                                    <Pagination currentPageIndex={1} pagesCount={1} />
+                                                }
+                                            />
+
+
+                                            
+                                        </SpaceBetween>
                                 <Form
                                     actions={
-                                        <SpaceBetween direction="horizontal" size="xs">
+                                        <SpaceBetween direction="horizontal" size="l">
                                             <Button formAction="none" variant="link"> Cancel</Button>
                                             <Button disabled={inputSubmitButtonDisabled} onClick={(event) => submitQuestion(event)} variant="primary">Submit</Button>
                                         </SpaceBetween>}
                                 >
-                                    <FormField label="Generated Questions">
-                                        <SpaceBetween direction="vertical" size="l">
-                                          
-
-                                            <TextContent>{answer}</TextContent>
-                                        </SpaceBetween>
+                                    <FormField label="">
+                                       
                                     </FormField>
                                 </Form>
 

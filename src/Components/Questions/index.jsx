@@ -163,11 +163,18 @@ const Content = (state) => {
                     response = response.replaceAll("\\", "");
                     response = response.replaceAll('"', "");
                     var a = response.substring(response.lastIndexOf('=') + 2, response.length - 2);
+                    const splitResponse = a.split("nn");
+                    console.log('splitResponse ' + splitResponse.length);
 
 
                     setInputValueDisabled(false);
                     setInputSubmitButtonDisabled(false);
-                    setAnswer(a);
+                    if (splitResponse.length === 1) {
+                        setAnswer(splitResponse);
+                    } else {
+                        setAnswer(splitResponse[1]);
+                    }
+                    
                     setSpinnerVisible(true);
                 }
 
