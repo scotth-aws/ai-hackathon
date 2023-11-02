@@ -458,7 +458,7 @@ const Content = (state) => {
                                                 columnDefinitions={[
                                                     {
                                                         id: "question",
-                                                        header: "Question",
+                                                        header: "",
                                                         cell: e => e.question,
                                                         sortingField: "question",
                                                         isRowHeader: true
